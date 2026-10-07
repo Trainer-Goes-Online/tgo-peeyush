@@ -1,13 +1,8 @@
 import Link from 'next/link';
 import { ArrowRight, ShieldCheck } from '@phosphor-icons/react/dist/ssr';
 
-import {
-  CHECKOUT_HREF,
-  CTA_LABEL,
-  CTA_SCARCITY,
-  PROMISE_NAME,
-  PROMISE_TEXT,
-} from './offer';
+import { CHECKOUT_HREF, CTA_LABEL, PROMISE_NAME, PROMISE_TEXT } from './offer';
+import { SeatCount } from './seat-count';
 
 /* Every value is a hex measured on breathforhealth.in, or an alpha of one.
    globals.css carries the same palette as CSS variables: change both together. */
@@ -89,25 +84,50 @@ export function SectionHeading({
 }
 
 /* The copy's [CTA BLOCK]: button, scarcity line, promise line. */
-export function CtaBlock({ id, className = '' }: { id?: string; className?: string }) {
+export function CtaBlock({
+  id,
+  className = '',
+  hero = false,
+}: {
+  id?: string;
+  className?: string;
+  hero?: boolean;
+}) {
   return (
     <div id={id} className={`flex flex-col items-center text-center ${className}`}>
-      <Link href={CHECKOUT_HREF} className="cta-pill w-full max-w-[560px]">
-        <span>{CTA_LABEL}</span>
-        <ArrowRight weight="bold" aria-hidden />
-      </Link>
-      <p className="mt-4 font-display text-[15px] font-semibold italic sm:text-[16px]" style={{ color: C.heading }}>
-        {CTA_SCARCITY}
-      </p>
-      <p className="mt-2 flex max-w-[560px] items-start justify-center gap-2 text-[14.5px] leading-snug sm:text-[15px]" style={{ color: C.inkSoft }}>
-        <ShieldCheck weight="fill" aria-hidden className="pp-promise-icon" style={{ color: C.accent }} />
-        <span>
-          <span className="font-semibold underline underline-offset-2" style={{ color: C.heading }}>
-            {PROMISE_NAME}
+      {hero ? (
+        <Link href={CHECKOUT_HREF} className="cta-pill cta-pill--hero w-full max-w-[560px]">
+          <span>{CTA_LABEL}</span>
+          <span className="cta-arrow" aria-hidden>
+            <ArrowRight weight="bold" />
           </span>
-          : <em>{PROMISE_TEXT}</em>
+        </Link>
+      ) : (
+        <Link href={CHECKOUT_HREF} className="cta-pill w-full max-w-[560px]">
+          <span>{CTA_LABEL}</span>
+          <ArrowRight weight="bold" aria-hidden />
+        </Link>
+      )}
+      <p className="mt-3 w-full max-w-[560px] text-[14.5px] leading-snug sm:text-[15px]" style={{ color: C.inkSoft }}>
+        <ShieldCheck weight="fill" aria-hidden className="pp-promise-icon" style={{ color: C.accent }} />
+        <span className="font-semibold underline underline-offset-2" style={{ color: C.heading }}>
+          {PROMISE_NAME}
         </span>
+        : <em>{PROMISE_TEXT}</em>
       </p>
+      {hero ? (
+        <p className="mt-4 font-display text-[16px] font-bold leading-snug sm:text-[17px]" style={{ color: C.heading }}>
+          Last{' '}
+          <span className="seat-chip">
+            <SeatCount />
+          </span>{' '}
+          Seats Left - Booking Closes Once Full
+        </p>
+      ) : (
+        <p className="mt-4 font-display text-[15px] font-semibold italic sm:text-[16px]" style={{ color: C.heading }}>
+          Last <SeatCount /> Seats Left - Booking Closes Once Full
+        </p>
+      )}
     </div>
   );
 }

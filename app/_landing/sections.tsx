@@ -46,7 +46,7 @@ export function SuccessStories() {
     <Band tone="mint">
       <Container>
         <SectionHeading>
-          Success <Hl>Stories</Hl>
+          Real Clients. <Hl>Real Results.</Hl>
         </SectionHeading>
         <VideoGrid clips={CLIPS_FIRST} columns={3} />
       </Container>

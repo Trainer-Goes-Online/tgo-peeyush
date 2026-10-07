@@ -28,9 +28,8 @@ export const CHECKOUT_HREF = '/checkout';
 // ⚠️ "81% Off" names no original price. Confirm the regular price it is off.
 export const CTA_LABEL = 'Book My Seat Now - 81% Off Today!';
 
-// ⚠️ PLACEHOLDER from the copy doc. The seat count is not supplied yet.
-export const SEATS_LEFT = 'xx';
-export const CTA_SCARCITY = `Last ${SEATS_LEFT} Seats Left - Booking Closes Once Full`;
+/** The seat count shown on load; seat-count.tsx steps it down from here. */
+export const SEATS_START = 44;
 
 export const PROMISE_NAME = 'Get-Relief Promise';
 export const PROMISE_TEXT = 'Notice visible relief in your symptoms or get 100% refund!';
