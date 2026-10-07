@@ -1,6 +1,6 @@
 'use client';
 
-import { PRICE_RUPEES } from '@/app/_landing/offer';
+import { PRICE_RUPEES, WORKSHOP_NAME } from '@/app/_landing/offer';
 import { collectSignals } from '@/lib/client-signals';
 import type { SendableEvent } from '@/lib/meta-capi';
 import {
@@ -25,8 +25,8 @@ import {
 
 const VALUE = PRICE_RUPEES;
 const ITEM: Ga4Item = {
-  item_id: 'peeyush-5day-health-reset',
-  item_name: '5-Day Complete Health Reset Challenge',
+  item_id: 'peeyush-2day-breath-workshop',
+  item_name: WORKSHOP_NAME,
   price: VALUE,
   quantity: 1,
 };
@@ -96,10 +96,9 @@ export function trackBeginCheckout() {
 }
 
 /**
- * Details valid and the buyer is about to be handed to the gateway. This is
- * the real intent, and on a REDIRECT gateway it is also the last thing this
- * page will ever be able to report: the next navigation leaves the site. It
- * survives that navigation because capi() posts with keepalive: true.
+ * Details valid and the Razorpay sheet is about to open. Fires on the pay tap,
+ * never on arrival. capi() posts with keepalive so the success navigation
+ * cannot cut it off.
  */
 export function trackInitiateCheckout(person: Person) {
   capi('InitiateCheckout', person);

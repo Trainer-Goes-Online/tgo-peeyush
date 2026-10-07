@@ -1,179 +1,73 @@
-/**
- * Every date, time, price and destination on the page comes through this file.
- * Nothing below it should ever hard-code one again: when the cohort moves, one
- * edit here moves the announcement bar, the hero, the pills, the schedule
- * heading, the docked bar, the footer and the metadata together.
- */
+/* The only file allowed to declare a price, a date, a session time or a
+   destination. Strings are verbatim from COPY-SOURCE.md. */
 
-/**
- * THE price, in RUPEES. One number, from one env var, used by the copy, the
- * GA4 event values and the amount the gateway charges. Nothing anywhere else
- * may declare a price: two sources drift, and the drift is invisible until the
- * charge and the label disagree on a live page.
- *
- * This file stays rupees-only even though Razorpay charges in PAISE. The
- * conversion lives once, in `lib/checkout-config.ts`, next to the code that
- * actually talks to the gateway. It was briefly exported here as
- * `PRICE_PAISE`; that came back to bite when the funnel moved to a
- * rupees-denominated gateway and again when it moved back, so the rule is now:
- * the landing page speaks rupees, the payment layer converts.
- */
-/* `??` does NOT catch an empty string, and .env.example ships every key blank.
-   So a copied-but-unfilled .env.local would give Number('') === 0: a page
-   advertising ₹0 and an order for nothing, with nothing throwing. Guard on a
-   positive number, not on null. */
+/* Guard on a positive number: `??` does not catch an empty string, so an
+   unfilled env var would otherwise give a ₹0 page and a zero-paise order. */
 const RAW_PRICE = Number(process.env.NEXT_PUBLIC_PRICE_RUPEES);
-export const PRICE_RUPEES = Number.isFinite(RAW_PRICE) && RAW_PRICE > 0 ? RAW_PRICE : 497;
-export const PRICE = `₹${PRICE_RUPEES.toLocaleString('en-IN')}`;
-/** The anchor the announcement bar names. Rising, per the source copy. */
-export const PRICE_RISES_TO = '₹1599';
+export const PRICE_RUPEES = Number.isFinite(RAW_PRICE) && RAW_PRICE > 0 ? RAW_PRICE : 99;
 
-/* The cohort. The source copy wrote the date as "[30th September]", in
-   brackets, which is the shape of a fill-in-the-blank rather than a date, so
-   the brackets were dropped: rendering them literally would ship a template
-   marker to a live page.
+export const inr = (n: number) => `₹${n.toLocaleString('en-IN')}`;
+export const PRICE = inr(PRICE_RUPEES);
 
-   MOVED TO 7TH OCTOBER 2026 (Atul, 2026-09-18). The year is carried in the
-   string now: the cohort is weeks out and a bare day-and-month on a live page
-   is ambiguous once it is close to a year boundary. */
-export const START_DATE = '7th October 2026';
-export const SESSION_TIMES = '6:30 AM & 7:30 PM';
-export const SESSION_TIMES_TZ = '6:30 AM or 7:30 PM IST';
+export const WORKSHOP_NAME = '2-Day Breath Healing Mastery Workshop';
+export const AUDIENCE_LINE =
+  "For people who've tried everything - yet still struggle with recurring health issues";
+export const FORMAT = '2-Day Live, Doctor-Led Workshop';
 
-/**
- * The two figures in the trust row. They are claims about the client's track
- * record, so they live here as data rather than inside a component: if either
- * turns out to be unsupportable, it is one edit, not a hunt.
- *
- * ⚠️ UNVERIFIED. The source copy asserts "1000+ Health Transformations" and a
- * "5.0 Client Rating" with no platform named behind the rating. A 5.0 with no
- * source is the weakest kind of proof and the easiest to challenge. Flagged for
- * Atul, not changed.
- */
-export const HEALTH_TRANSFORMATIONS = '1000+';
-export const CLIENT_RATING = '5.0';
+// ⚠️ PLACEHOLDER from the copy doc. The two session dates are not supplied yet.
+export const DATES = 'XX & YY October';
+export const SESSION_TIME = '11:00 AM - 12:30 PM';
+export const SESSION_TIME_TZ = '11:00 AM - 12:30 PM IST';
 
-/**
- * The WhatsApp community invite. The thank-you page is built around joining it
- * as the single next step, so an empty value there shows the buyer a dead
- * button at the exact moment they have just paid.
- *
- * ⚠️ REQUIRED BEFORE LAUNCH. Create the group, take the invite link.
- */
-export const WHATSAPP_INVITE = process.env.NEXT_PUBLIC_WHATSAPP_INVITE ?? '';
+// ⚠️ UNVERIFIED claim. Confirm a public Trustpilot profile carries 4.8.
+export const RATING = '4.8';
+export const RATING_LABEL = 'Trust Pilot Rating';
 
-/** The next click is a payment. Every CTA on the page, including the docked
- *  bar, points here. */
 export const CHECKOUT_HREF = '/checkout';
 
-/**
- * THE THREE CTA LABELS. There are exactly three, and every button on the site
- * uses one of them — standardised 24 Sep 2026 on Atul's call.
- *
- * Before this the page carried four different wordings: "Start Your 5-Day
- * Health Reset · ₹497" in three places, "Reserve My Spot" on the offer card,
- * "Take Action · ₹497" hard-coded into beat 14, and a fourth on the docked
- * bar. A reader scrolling the page met the same single action described four
- * ways, which reads as four different offers rather than one.
- *
- * ⚠️ THE SPLIT IS BY POSITION, NOT BY SECTION. Adding a button means picking
- * from these three, not writing a fifth:
- *
- *   CTA_LABEL         the default. The hero, the live-sessions band, the final
- *                     recap, beat 14 — everything that is not one of the two
- *                     cases below.
- *   CTA_LABEL_CARD    the button UNDER THE OFFER-STACK IMAGE only. It carries
- *                     no price because the card states the price on its own
- *                     line two rows above the button, and repeating it inside
- *                     the label reads as a second, different charge.
- *   CTA_LABEL_STICKY  the docked bar only. Worded for someone who has already
- *                     scrolled past the offer, so it names the outcome rather
- *                     than the programme.
- *
- * ⚠️ FLAG FOR ATUL, carried over: the source copy writes beat 14's button as
- * "[Take Action · ₹497 →]". That wording is now REPLACED by CTA_LABEL, which
- * is a deliberate departure from verbatim copy in favour of one consistent
- * action. Say the word and it goes back to its own constant.
- */
-export const CTA_LABEL = `Start Your 5-Day Reset · ${PRICE}`;
-export const CTA_LABEL_CARD = 'Reserve My Spot';
-export const CTA_LABEL_STICKY = `Get Instant Access · ${PRICE}`;
+// ⚠️ "81% Off" names no original price. Confirm the regular price it is off.
+export const CTA_LABEL = 'Book My Seat Now - 81% Off Today!';
 
-export const CTA_NOTE_HERO = 'Join Risk-Free · 100% Money-Back Guarantee';
-export const CTA_NOTE = 'Join Risk-Free · 100% Money-Back Guarantee';
-/** The docked bar's own line, which names the guarantee without the prefix:
- *  it sits at 11.5px on a phone and the longer note clipped at both edges. */
-export const CTA_NOTE_STICKY = '100% Money-Back Guarantee';
+// ⚠️ PLACEHOLDER from the copy doc. The seat count is not supplied yet.
+export const SEATS_LEFT = 'xx';
+export const CTA_SCARCITY = `Last ${SEATS_LEFT} Seats Left - Booking Closes Once Full`;
 
-/** ₹2,500 → "₹2,500". One formatter, so a value never renders two ways. */
-export const inr = (n: number) => `₹${n.toLocaleString('en-IN')}`;
+export const PROMISE_NAME = 'Get-Relief Promise';
+export const PROMISE_TEXT = 'Notice visible relief in your symptoms or get 100% refund!';
+export const CTA_NOTE = `${PROMISE_NAME}: ${PROMISE_TEXT}`;
 
-/**
- * THE VALUE STACK — four items, in the order the source copy lists them.
- *
- * ONE source for BOTH beats that carry it: the toolkit cards (./toolkit) and
- * the closing recap ledger (./close). On the Kaizen build these were two
- * hand-typed lists and they drifted the moment an item was revalued — the
- * ledger showed rows adding to one figure with a different total struck out
- * beside them, on the one beat of the page a reader actually does the
- * arithmetic on. Deriving both from this array makes that impossible.
- *
- * `value` is a NUMBER, never a formatted string, so the total is SUMMED rather
- * than typed. The copy's stated total (₹4,791) is exactly this sum; if an item
- * is ever revalued the recap follows it on its own.
- *
- * Titles, values, bodies and access tags are verbatim from COPY-SOURCE.md.
- */
-export type IncludedItem = {
-  /** Stable key. The toolkit maps it to a glyph; nothing else depends on it. */
-  key: 'challenge' | 'breath' | 'stress' | 'mobility';
-  n: string;
+export const WHATSAPP_INVITE = process.env.NEXT_PUBLIC_WHATSAPP_INVITE ?? '';
+
+export type Bonus = {
+  n: 1 | 2 | 3;
   title: string;
   value: number;
   body: string;
-  tag: string;
-  /** 'live' for the challenge itself, 'instant' for the three downloads. */
-  access: 'live' | 'instant';
 };
 
-export const INCLUDED: IncludedItem[] = [
+export const BONUSES: Bonus[] = [
   {
-    key: 'challenge',
-    n: '01',
-    title: '5-Day Live Complete Health Reset Challenge',
+    n: 1,
+    title: '10-min Breath Healing Mastery Booklet',
     value: 2500,
-    body: 'Experience five doctor-led live sessions designed to help you understand your body better, reduce stress & internal overload, improve energy and start working on your health from within.',
-    tag: 'LIVE ACCESS · INCLUDED',
-    access: 'live',
+    body: 'A simple step-by-step guide to practise the 10-Min Breath Healing Method™ at home.',
   },
   {
-    key: 'breath',
-    n: '02',
-    title: 'Breath for Health Blueprint',
-    value: 997,
-    body: 'Your practical companion guide covering sleep, energy, nervous-system recovery and better breathing, with self-assessments, simple protocols and a 7-day practice plan you can follow step by step.',
-    tag: 'INSTANT ACCESS · INCLUDED',
-    access: 'instant',
+    n: 2,
+    title: 'Breath For Health Blueprint',
+    value: 1500,
+    body: 'Your practical guide to better breathing, deeper sleep, higher energy and nervous-system recovery with simple protocols and a 7-day practice plan.',
   },
   {
-    key: 'stress',
-    n: '03',
+    n: 3,
     title: 'Stress Emergency Toolkit',
-    value: 797,
-    body: 'A quick-reference toolkit with 4 simple techniques for stressful moments, sleepless nights, low energy and anxiety, so you know exactly what to use when you need support most.',
-    tag: 'INSTANT ACCESS · INCLUDED',
-    access: 'instant',
-  },
-  {
-    key: 'mobility',
-    n: '04',
-    title: 'The 10-Minute Daily Joint Mobility & Pain Relief Playbook',
-    value: 497,
-    body: 'A simple 10-minute, office-chair friendly routine to help loosen stiff joints, ease neck and back tension, improve everyday mobility and support better pain relief, with no gym or equipment required.',
-    tag: 'INSTANT ACCESS · INCLUDED',
-    access: 'instant',
+    value: 999,
+    body: 'Get 4 quick breathing techniques you can use during stressful moments, anxiety, sleepless nights or low-energy days, so you know exactly what to do when you need relief most.',
   },
 ];
 
-/** Summed, never typed. Equals the copy's ₹4,791. */
-export const INCLUDED_TOTAL = INCLUDED.reduce((n, item) => n + item.value, 0);
+/* Summed, never typed. Equals the copy's "Bonuses worth 4999". */
+export const BONUS_TOTAL = BONUSES.reduce((sum, b) => sum + b.value, 0);
+export const BONUS_TOTAL_LABEL = `Bonuses worth ${inr(BONUS_TOTAL)}`;
+
+export const OFFER_LINE = `Get The 2-Day Workshop + All 3 Bonuses For Just ${PRICE}`;

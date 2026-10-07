@@ -20,7 +20,10 @@ export default function PrivacyPolicyPage() {
       <h2>1. Information we collect</h2>
       <p>Directly from you, when you register or pay:</p>
       <ul>
-        <li>Your name, email address and WhatsApp number.</li>
+        <li>
+          Your name, email address, WhatsApp number, town or city, country, and
+          whether you are a working professional or a homemaker.
+        </li>
         <li>
           Payment confirmation details from our payment processor. We never see
           or store your full card number, UPI PIN or bank credentials.
@@ -42,7 +45,7 @@ export default function PrivacyPolicyPage() {
       <h2>2. How we use it</h2>
       <ul>
         <li>
-          To deliver the {LEGAL.product}: Zoom links, session reminders and the
+          To deliver the {LEGAL.product}: session joining links, reminders and the
           included guides.
         </li>
         <li>To answer your questions and provide support.</li>

@@ -1,31 +1,9 @@
 'use client';
 
-/**
- * /thank-you, where a completed payment lands.
- *
- * Copy and section order follow the ankita-postpartum thank-you page, which is
- * the house standard: confirmation → the WhatsApp join as the ONE next step →
- * what arrives inside → be early → the policy → prep. Skinned to this
- * project's tokens.
- *
- * The page is built around the community join, not around the receipt. That is
- * the point of the design: the Zoom links live in the group, so a buyer who
- * never joins is a refund waiting to happen. Everything else on the page is
- * subordinate to that one button.
- *
- * Wording is adapted only where ankita's is factually about a different
- * product: physiotherapist becomes doctor-led (Dr. Peeyush is an MBBS doctor
- * and his own copy says "doctor-led" throughout), and postpartum recovery
- * becomes the reset. The structure is unchanged.
- *
- * ⚠️ Two inherited promises were CORRECTED rather than carried, and both are
- * noted at the constant they belong to: the "no refunds for missed live
- * sessions" policy line (gone, it contradicted his money-back guarantee) and
- * the "Day One guarantee" wording under the policy block (gone, it was the
- * previous client's refund window). Everything on this page that is not from
- * COPY-SOURCE.md is flagged where it stands, because COPY-SOURCE.md carries
- * no thank-you page at all.
- */
+/* Confirmation -> the WhatsApp join as the one next step -> what arrives
+   inside -> be early -> policy -> prep -> final nudge. House structure from
+   ankita-postpartum. The copy doc carries no thank-you page, so lines not
+   marked as from COPY-SOURCE.md are house standard and want the client's read. */
 
 import Link from 'next/link';
 import { Suspense, useEffect } from 'react';
@@ -39,7 +17,6 @@ import {
   CheckCircle,
   Clock,
   Confetti,
-  Heart,
   Megaphone,
   Notebook,
   Person,
@@ -51,65 +28,39 @@ import {
 
 import { LEGAL } from '../_landing/legal';
 import {
+  DATES,
   PRICE,
-  SESSION_TIMES_TZ,
-  START_DATE,
+  PROMISE_NAME,
+  SESSION_TIME_TZ,
   WHATSAPP_INVITE,
+  WORKSHOP_NAME,
 } from '../_landing/offer';
 import SiteFooter from '@/components/SiteFooter';
 import { C } from '../_landing/shared';
 import { trackPurchase } from '@/lib/track';
 
-/* WhatsApp's own brand colours. These deliberately do NOT come from the page
-   palette: the community button is the same green on every funnel we ship, so
-   a buyer recognises what it opens before reading the label. */
+/* WhatsApp's brand colours, the same on every funnel, never the page palette. */
 const WA = { green: '#25D366', deep: '#128C7E' } as const;
 
-/* Semantic, not brand: green means good and amber means caution on every page
-   we ship. The HUE is fixed; the STEP is not. These are the steps that read on
-   the LIGHT ground this page sits on: his bright 500s (#10B981, #F59E0B) are
-   2.5:1 and 2.0:1 here, and are only legal inside a dark object. The amber is
-   the 700 rather than the 600, because it is small text on the #FEF3C7 chip
-   below (5.3:1) rather than on the page. */
-const GOOD_GREEN = '#059669';
-const WARN_AMBER = '#B45309';
+const GOOD_GREEN = '#10B981';
+const WARN_AMBER = '#F59E0B';
 
 const COMMUNITY_BENEFITS: { icon: typeof CheckCircle; text: string }[] = [
-  { icon: ChatCircleDots, text: 'Daily Zoom session links' },
-  { icon: Megaphone, text: 'Session reminders before class' },
+  { icon: ChatCircleDots, text: 'Live session links for both days' },
+  { icon: Megaphone, text: 'Reminders before each session' },
   { icon: Notebook, text: 'Instructions for each day' },
-  { icon: Heart, text: 'Support during the 5-day reset' },
   { icon: Person, text: 'Important updates from Dr. Peeyush' },
 ];
 
-/* ⚠️ HOUSE STANDARD, NOT THIS CLIENT'S COPY. COPY-SOURCE.md carries no
-   thank-you page at all, so these two lists are the ankita/Kaizen originals.
-   They are plausible for a dated live challenge and they are unconfirmed.
-   Have Dr. Peeyush read both before launch.
-
-   One line was REMOVED here rather than carried over: "No refunds for missed
-   live sessions". It is not his copy, and it flatly contradicts his own sales
-   page, which promises a "100% Money-Back Guarantee" four times. A buyer who
-   reads the promise, pays, and then reads the contradiction on the very next
-   screen has a dispute the merchant loses. Whatever refund window comes back
-   from the client belongs in app/refund-policy/page.tsx first; if a
-   missed-session exclusion is part of it, restate it here in his words. */
 const POLICY_ITEMS = [
+  'Recordings will not be provided', // FAQ 5, COPY-SOURCE.md
   'No rescheduling to future batches',
-  'Recordings are not guaranteed',
 ];
 
-/* ⚠️ ALSO HOUSE STANDARD, NOT THIS CLIENT'S COPY, and also wants his read.
-   "Keep a yoga mat or soft surface ready" was carried in with the scaffold and
-   was REMOVED this pass rather than left flagged, because it contradicted two
-   things on this funnel at once: the line at the bottom of this very section
-   that says no equipment is required, and the sales page's own promise of
-   results "without endless yoga, gym workouts, medicines or expensive
-   treatments". If his sessions do need a mat or a floor, he says so and it
-   goes back in here AND the "no equipment required" line comes out. */
 const PREP_ITEMS = [
-  'Wear comfortable clothes',
+  'Attend both sessions live from start to finish', // FAQ 5, COPY-SOURCE.md
   'Be in a distraction-free space',
+  'Wear comfortable clothes',
   'Join the community immediately',
 ];
 
@@ -124,66 +75,54 @@ export default function ThankYouPage() {
 function ThankYou() {
   const paymentId = useSearchParams().get('p') ?? '';
 
-  /* GA4 purchase only. Meta's Purchase and the server-side GA4 copy both come
-     from the Razorpay webhook, where the payment is proven and where buyers
-     who never return to this page are still counted, which for UPI is most of
-     them.
-
-     `p` is the razorpay_payment_id, put there by the checkout page's success
-     handler. It is the same string the webhook uses as the Meta event_id and
-     the GA4 transaction_id, so the two sources of this sale collapse into one
-     wherever they meet. */
+  /* GA4 only. Meta Purchase and the server GA4 copy come from the webhook,
+     keyed on the same payment id, so the two collapse into one sale. */
   useEffect(() => {
     if (paymentId) trackPurchase(paymentId);
   }, [paymentId]);
 
   return (
-    <main style={{ background: C.canvasAlt }}>
-      {/* ── Confirmation ─────────────────────────────────────────────── */}
+    <main className="font-body" style={{ background: C.tint }}>
       <section className="px-5 pb-14 pt-12 text-center md:pb-20 md:pt-20">
         <div className="mx-auto max-w-3xl">
           <span
             className="mx-auto grid h-20 w-20 place-items-center rounded-full"
-            style={{ background: C.goldWash, border: `1px solid ${C.lineStrong}` }}
+            style={{ background: C.surface, border: `1px solid ${C.line}` }}
           >
-            <Confetti weight="duotone" className="h-10 w-10" style={{ color: C.goldInk }} />
+            <Confetti weight="duotone" className="h-10 w-10" style={{ color: C.ink }} />
           </span>
 
           <span
-            className="mt-6 inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.2em]"
-            style={{ background: C.goldWash, color: C.goldInk }}
+            className="mt-6 inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 font-display text-[11px] font-bold uppercase tracking-[0.2em]"
+            style={{ background: C.accent, color: C.onAccent }}
           >
             <Check weight="bold" className="h-3 w-3" />
             Congrats!
           </span>
 
           <h1
-            className="mt-5 font-display text-[30px] font-extrabold leading-[1.05] tracking-tight sm:text-[44px] lg:text-[52px]"
+            className="mt-5 font-display text-[30px] font-extrabold leading-[1.08] tracking-tight sm:text-[44px] lg:text-[52px]"
             style={{ color: C.ink, textWrap: 'balance' } as React.CSSProperties}
           >
-            Your 5-Day Complete Health Reset is{' '}
-            <span style={{ color: C.goldDeep }}>Confirmed.</span>
+            Your seat is <span className="underline decoration-[3px] underline-offset-[6px]" style={{ textDecorationColor: C.accent }}>confirmed.</span>
           </h1>
 
           <p
             className="mx-auto mt-4 max-w-xl text-[15px] leading-relaxed sm:text-[17px]"
             style={{ color: C.inkSoft }}
           >
-            You are officially enrolled in the{' '}
-            <strong style={{ color: C.ink }}>
-              5-Day Complete Health Reset Challenge.
-            </strong>{' '}
-            Please read this page carefully, your access depends on the next
-            step.
+            You are officially registered for the{' '}
+            <strong style={{ color: C.ink }}>{WORKSHOP_NAME}.</strong> Please read
+            this page carefully, your access depends on the next step.
           </p>
 
           <div className="mx-auto mt-8 grid max-w-lg gap-3 sm:grid-cols-2">
-            <DetailCard icon={CalendarBlank} label="Challenge date" value={START_DATE} />
+            <DetailCard icon={CalendarBlank} label="Workshop dates" value={DATES} />
             <DetailCard
               icon={Clock}
-              label="Live session timings"
-              value={SESSION_TIMES_TZ}
-              footnote="Choose the batch that fits"
+              label="Live session time"
+              value={SESSION_TIME_TZ}
+              footnote="Same time on both days"
             />
           </div>
 
@@ -198,7 +137,6 @@ function ThankYou() {
         </div>
       </section>
 
-      {/* ── The one next step ────────────────────────────────────────── */}
       <section className="px-5 pb-4 md:px-8">
         <div
           className="relative mx-auto max-w-3xl overflow-hidden rounded-3xl p-8 text-center text-white md:p-10"
@@ -223,25 +161,15 @@ function ThankYou() {
             </h2>
 
             <p className="mx-auto mt-3 max-w-md text-[14.5px] leading-relaxed text-white/90">
-              All updates, Zoom links, reminders and daily instructions will be
-              shared inside the WhatsApp Community.{' '}
+              Session links, reminders and updates for both days are shared
+              inside the WhatsApp Community.{' '}
               <strong className="text-white">
-                Your access to the challenge depends on joining this group.
+                Your access to the workshop depends on joining this group.
               </strong>
             </p>
 
-            {/* THE CTA ALWAYS RENDERS. This card IS a CTA: the challenge
-                blueprint's community card is the one post-purchase action, and
-                a version of it with the button swapped out is not a quieter
-                card, it is a different component that asks the buyer for
-                nothing.
-
-                It used to render a line saying the invite was on its way by
-                email whenever the link was missing, which is worse than a
-                missing button on two counts: it changed the promise on a
-                post-purchase page, and nobody has built that email. So the
-                button stands in both states and the MISSING case is made loud
-                for us instead of quiet for the buyer. */}
+            {/* Renders in both states: a post-purchase page that asks for
+                nothing is worse than a visibly disabled button. */}
             <a
               href={WHATSAPP_INVITE || undefined}
               target={WHATSAPP_INVITE ? '_blank' : undefined}
@@ -261,13 +189,8 @@ function ThankYou() {
             </a>
 
             {WHATSAPP_INVITE ? (
-              <p className="mt-4 text-[11.5px] text-white/80">
-                Opens in WhatsApp · 1-click join
-              </p>
+              <p className="mt-4 text-[11.5px] text-white/80">Opens in WhatsApp · 1-click join</p>
             ) : (
-              /* Actionable and true, rather than a promise of automation that
-                 does not exist. The address is the monitored inbox from
-                 legal.ts, so it moves with the client's real support address. */
               <p className="mt-4 text-[12px] font-semibold text-white/90">
                 Having trouble joining? Write to {LEGAL.email} and we will send
                 your invite.
@@ -277,7 +200,6 @@ function ThankYou() {
         </div>
       </section>
 
-      {/* ── What arrives inside ──────────────────────────────────────── */}
       <section className="px-5 py-16 md:px-8 md:py-20">
         <div className="mx-auto max-w-3xl">
           <div className="text-center">
@@ -286,8 +208,7 @@ function ThankYou() {
               className="mt-3 font-display text-[24px] font-extrabold leading-tight sm:text-[32px]"
               style={{ color: C.ink }}
             >
-              What you&rsquo;ll receive in the{' '}
-              <span style={{ color: C.goldDeep }}>community.</span>
+              What you&rsquo;ll receive in the community.
             </h2>
           </div>
 
@@ -300,9 +221,9 @@ function ThankYou() {
               >
                 <span
                   className="grid h-10 w-10 shrink-0 place-items-center rounded-full"
-                  style={{ background: C.goldPale }}
+                  style={{ background: C.tint }}
                 >
-                  <Icon weight="duotone" className="h-5 w-5" style={{ color: C.goldInk }} />
+                  <Icon weight="duotone" className="h-5 w-5" style={{ color: C.ink }} />
                 </span>
                 <span className="text-[14.5px] font-medium" style={{ color: C.inkSoft }}>
                   {text}
@@ -318,16 +239,23 @@ function ThankYou() {
 
           <p
             className="mt-6 rounded-xl p-4 text-center text-[13.5px] font-medium"
-            style={{ background: '#FEF3C7', color: WARN_AMBER, border: '1px solid #FDE68A' }}
+            style={{
+              background: 'rgba(245,158,11,0.12)',
+              color: C.ink,
+              border: '1px solid rgba(245,158,11,0.45)',
+            }}
           >
-            <Warning weight="fill" className="mr-1.5 inline-block h-4 w-4 align-text-bottom" />
-            Please do <strong>not mute</strong> or{' '}
-            <strong>exit the community</strong> during these <strong>5 days</strong>.
+            <Warning
+              weight="fill"
+              className="mr-1.5 inline-block h-4 w-4 align-text-bottom"
+              style={{ color: WARN_AMBER }}
+            />
+            Please do <strong>not mute</strong> or <strong>exit the community</strong>{' '}
+            until the workshop is over.
           </p>
         </div>
       </section>
 
-      {/* ── Be available 5 min before ────────────────────────────────── */}
       <section className="px-5 pb-4 md:px-8">
         <div
           className="mx-auto max-w-3xl rounded-3xl p-7 md:p-9"
@@ -336,29 +264,28 @@ function ThankYou() {
           <div className="flex items-start gap-4">
             <span
               className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl"
-              style={{ background: C.goldPale, border: `1px solid ${C.line}` }}
+              style={{ background: C.tint, border: `1px solid ${C.line}` }}
             >
-              <Clock weight="duotone" className="h-6 w-6" style={{ color: C.goldInk }} />
+              <Clock weight="duotone" className="h-6 w-6" style={{ color: C.ink }} />
             </span>
             <div className="min-w-0">
               <h3
                 className="font-display text-[18px] font-extrabold leading-snug sm:text-[20px]"
                 style={{ color: C.ink }}
               >
-                Please be available{' '}
-                <span style={{ color: C.goldDeep }}>5 minutes before</span> each
-                live session.
+                Please be available 5 minutes before each live session.
               </h3>
               <p className="mt-2 text-[14px] leading-relaxed" style={{ color: C.inkSoft }}>
-                These are <strong>live, doctor-led sessions</strong>. Arriving
-                late may result in missing important instructions.
+                These are <strong>live, doctor-led sessions</strong>, and
+                practising along with Dr. Peeyush is an important part of getting
+                the most from them. Arriving late may mean missing important
+                instructions.
               </p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ── Important policy ─────────────────────────────────────────── */}
       <section className="px-5 py-16 md:px-8 md:py-20">
         <div className="mx-auto max-w-3xl">
           <div className="text-center">
@@ -367,29 +294,22 @@ function ThankYou() {
               className="mt-3 font-display text-[24px] font-extrabold leading-tight sm:text-[32px]"
               style={{ color: C.ink }}
             >
-              Important <span style={{ color: C.goldDeep }}>policy.</span>
+              Important policy.
             </h2>
             <p className="mt-3 text-[14.5px]" style={{ color: C.inkSoft }}>
-              Because this is a live, structured experience:
+              Because this is a live, guided experience:
             </p>
           </div>
 
-          {/* Column count tracks POLICY_ITEMS.length by hand, because Tailwind
-              cannot build a class from a variable. Two items now that the
-              refund line is gone; put this back to sm:grid-cols-3 if a third
-              is restored. */}
           <ul className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-2">
             {POLICY_ITEMS.map((item) => (
               <li
                 key={item}
-                className="flex items-start gap-3 rounded-2xl p-5 text-center"
+                className="flex items-start gap-3 rounded-2xl p-5"
                 style={{ background: C.surface, border: `1px solid ${C.line}` }}
               >
-                <X weight="bold" className="mt-0.5 h-4 w-4 shrink-0" style={{ color: C.coralInk }} />
-                <span
-                  className="text-[13.5px] font-semibold leading-snug"
-                  style={{ color: C.inkSoft }}
-                >
+                <X weight="bold" className="mt-0.5 h-4 w-4 shrink-0" style={{ color: C.error }} />
+                <span className="text-[13.5px] font-semibold leading-snug" style={{ color: C.inkSoft }}>
                   {item}
                 </span>
               </li>
@@ -398,22 +318,14 @@ function ThankYou() {
 
           <div
             className="mt-8 rounded-2xl p-5 text-center"
-            style={{ background: C.canvasAlt, border: `1px solid ${C.line}` }}
+            style={{ background: C.surface, border: `1px solid ${C.line}` }}
           >
             <p className="font-display text-[15px] font-extrabold" style={{ color: C.ink }}>
-              Your spot has been reserved exclusively for you.
+              Your seat has been reserved exclusively for you.
             </p>
-            {/* This read "covers the Day One guarantee in full" until this
-                pass, which was the PREVIOUS funnel's refund window inherited
-                with the scaffold. Dr. Peeyush has never offered a Day One
-                guarantee: his own copy promises a "100% Money-Back Guarantee",
-                four times, with no terms stated anywhere. The link now names
-                his six words and nothing else. The refund page behind the link
-                now states the promise and the process and deliberately states
-                no window or exclusions, because none were ever supplied. */}
             <p className="mt-1.5 text-[12.5px]" style={{ color: C.inkSoft }}>
-              (The 100% Money-Back Guarantee you joined with is set out in our{' '}
-              <Link href="/refund-policy" className="underline" style={{ color: C.goldInk }}>
+              (The {PROMISE_NAME} you joined with is set out in our{' '}
+              <Link href="/refund-policy" className="font-semibold underline" style={{ color: C.ink }}>
                 refund policy
               </Link>
               .)
@@ -422,7 +334,6 @@ function ThankYou() {
         </div>
       </section>
 
-      {/* ── Prep checklist ───────────────────────────────────────────── */}
       <section className="px-5 pb-16 md:px-8 md:pb-20">
         <div className="mx-auto max-w-3xl">
           <div className="text-center">
@@ -431,10 +342,10 @@ function ThankYou() {
               className="mt-3 font-display text-[24px] font-extrabold leading-tight sm:text-[32px]"
               style={{ color: C.ink }}
             >
-              What to do <span style={{ color: C.goldDeep }}>before the call.</span>
+              What to do before the workshop.
             </h2>
             <p className="mt-3 text-[14.5px]" style={{ color: C.inkSoft }}>
-              To get maximum results, please:
+              To get the most from it, please:
             </p>
           </div>
 
@@ -447,17 +358,11 @@ function ThankYou() {
               >
                 <span
                   className="grid h-7 w-7 shrink-0 place-items-center rounded-full font-display text-[11.5px] font-bold"
-                  style={{
-                    background: `linear-gradient(135deg, ${C.goldMid}, ${C.goldDeep})`,
-                    color: C.onAccent,
-                  }}
+                  style={{ background: C.accent, color: C.onAccent }}
                 >
                   {i + 1}
                 </span>
-                <span
-                  className="text-[14px] font-medium leading-snug"
-                  style={{ color: C.inkSoft }}
-                >
+                <span className="text-[14px] font-medium leading-snug" style={{ color: C.inkSoft }}>
                   {item}
                 </span>
               </li>
@@ -468,28 +373,24 @@ function ThankYou() {
             <ShieldCheck
               weight="fill"
               className="mr-1.5 inline-block h-4 w-4 align-text-bottom"
-              style={{ color: C.goldInk }}
+              style={{ color: GOOD_GREEN }}
             />
-            <strong style={{ color: C.ink }}>No equipment required.</strong> No
-            prior fitness level required.
+            {/* FAQ 3, COPY-SOURCE.md */}
+            Everything is taught step-by-step and is beginner-friendly.
           </p>
         </div>
       </section>
 
-      {/* ── Final nudge ──────────────────────────────────────────────── */}
-      {/* Ankita's version is near-black with a pink bloom. The equivalent dark
-          stage in THIS project is the brand navy, which is what every dark
-          section on the landing page uses, so a black band here would read as
-          a different site. The bloom follows: brand gold, not gold on black. */}
       <section
         className="relative isolate overflow-hidden px-5 py-16 md:px-8 md:py-20"
-        style={{ background: C.navyDeep }}
+        style={{ background: C.dark }}
       >
         <div
           aria-hidden
           className="absolute inset-0 -z-10 opacity-40"
           style={{
-            background: `radial-gradient(ellipse at top, rgba(6,182,212,0.22) 0%, transparent 62%)`,
+            background:
+              'radial-gradient(ellipse at top, rgba(6,182,212,0.22) 0%, transparent 62%)',
           }}
         />
         <div className="mx-auto max-w-3xl text-center">
@@ -497,16 +398,12 @@ function ThankYou() {
             className="font-display text-[26px] font-extrabold leading-tight sm:text-[36px]"
             style={{ color: C.onDark }}
           >
-            This is your <span style={{ color: C.gold }}>first step</span>
-            <br className="hidden sm:block" /> toward feeling like yourself
-            again.
+            This is your first step toward breathing easier.
           </h2>
           <p className="mt-4 text-[14.5px]" style={{ color: C.onDarkMute }}>
             Now, join the community and we&rsquo;ll see you inside.
           </p>
 
-          {/* Same rule as the card above: the closing band asks for the action
-              in both states rather than ending the page on a paragraph. */}
           <div className="mt-8">
             <a
               href={WHATSAPP_INVITE || undefined}
@@ -531,29 +428,31 @@ function ThankYou() {
 
       <SiteFooter />
 
-      {/* ── Mobile sticky CTA: the page anchored on one action ────────── */}
       {WHATSAPP_INVITE && (
-        <div
-          className="fixed inset-x-0 bottom-0 z-40 md:hidden"
-          style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
-        >
+        <>
+          <div aria-hidden className="h-[78px] md:hidden" style={{ background: C.dark }} />
           <div
-            className="border-t px-4 pb-3 pt-3 shadow-[0_-8px_24px_-12px_rgba(14,39,51,0.25)] backdrop-blur"
-            style={{ background: 'rgba(250,253,254,0.95)', borderColor: C.line }}
+            className="fixed inset-x-0 bottom-0 z-40 md:hidden"
+            style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
           >
-            <a
-              href={WHATSAPP_INVITE}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex min-h-[52px] w-full items-center justify-center gap-2 rounded-2xl py-3.5 font-display text-[14.5px] font-extrabold text-white shadow-md"
-              style={{ background: `linear-gradient(135deg, ${WA.deep}, ${WA.green})` }}
+            <div
+              className="border-t px-4 pb-3 pt-3 shadow-[0_-8px_24px_-12px_rgba(6,20,28,0.25)] backdrop-blur"
+              style={{ background: 'rgba(255,255,255,0.95)', borderColor: C.line }}
             >
-              <WhatsappLogo weight="fill" className="h-5 w-5" />
-              Join the WhatsApp Community
-              <ArrowRight weight="bold" className="h-4 w-4" />
-            </a>
+              <a
+                href={WHATSAPP_INVITE}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex min-h-[52px] w-full items-center justify-center gap-2 rounded-2xl py-3.5 font-display text-[14.5px] font-extrabold text-white shadow-md"
+                style={{ background: `linear-gradient(135deg, ${WA.deep}, ${WA.green})` }}
+              >
+                <WhatsappLogo weight="fill" className="h-5 w-5" />
+                Join the WhatsApp Community
+                <ArrowRight weight="bold" className="h-4 w-4" />
+              </a>
+            </div>
           </div>
-        </div>
+        </>
       )}
     </main>
   );
@@ -578,9 +477,9 @@ function DetailCard({
       <div className="flex items-center gap-3">
         <span
           className="grid h-10 w-10 shrink-0 place-items-center rounded-lg"
-          style={{ background: C.goldPale }}
+          style={{ background: C.dark }}
         >
-          <Icon weight="duotone" className="h-5 w-5" style={{ color: C.goldInk }} />
+          <Icon weight="duotone" className="h-5 w-5" style={{ color: C.accent }} />
         </span>
         <div className="min-w-0">
           <p
@@ -609,19 +508,10 @@ function DetailCard({
 function SectionEyebrow({ text }: { text: string }) {
   return (
     <span
-      className="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-[10.5px] font-bold uppercase tracking-[0.2em]"
-      style={{ background: C.goldWash, color: C.goldInk }}
+      className="inline-flex items-center gap-2 rounded-full px-3 py-1.5 font-display text-[10.5px] font-bold uppercase tracking-[0.2em]"
+      style={{ background: C.accent, color: C.onAccent }}
     >
-      <span
-        aria-hidden
-        className="inline-block h-1 w-1 rounded-full"
-        style={{ background: C.goldInk }}
-      />
       {text}
     </span>
   );
 }
-
-
-
-
