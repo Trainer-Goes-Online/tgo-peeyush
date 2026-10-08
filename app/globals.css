@@ -507,8 +507,11 @@
 .pp-rail-track--reverse {
   animation-direction: reverse;
 }
-.pp-rail:hover .pp-rail-track {
-  animation-play-state: paused;
+/* Mouse only: on touch screens :hover sticks after a tap and froze the rail. */
+@media (hover: hover) and (pointer: fine) {
+  .pp-rail:hover .pp-rail-track {
+    animation-play-state: paused;
+  }
 }
 
 .pp-rail-photo {
