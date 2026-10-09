@@ -40,6 +40,9 @@ export const CTA_NOTE = `${PROMISE_NAME}: ${PROMISE_TEXT}`;
 
 export const WHATSAPP_INVITE = process.env.NEXT_PUBLIC_WHATSAPP_INVITE ?? '';
 
+/* All bonuses are released in the WhatsApp Community after Day 2, never at registration. */
+export const BONUS_DELIVERY_NOTE = 'All bonuses are shared in the WhatsApp Community after Day 2 of the workshop.';
+
 export type Bonus = {
   n: 1 | 2 | 3;
   title: string;
