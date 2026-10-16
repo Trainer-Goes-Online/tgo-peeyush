@@ -1,8 +1,21 @@
 import Link from 'next/link';
 import { ArrowRight, ShieldCheck } from '@phosphor-icons/react/dist/ssr';
 
-import { CHECKOUT_HREF, CTA_LABEL, PROMISE_NAME, PROMISE_TEXT } from './offer';
+import { CHECKOUT_HREF, CTA_LABEL, LIST_PRICE, OFF_LABEL, PRICE, PROMISE_NAME, PROMISE_TEXT } from './offer';
 import { SeatCount } from './seat-count';
+
+export function CtaLabel() {
+  return (
+    <span className="flex flex-col items-center leading-tight">
+      <span>Book My Seat Now</span>
+      <span className="mt-0.5 text-[0.85em]">
+        {LIST_PRICE && <s className="mr-1 font-semibold opacity-70 decoration-2">{LIST_PRICE}</s>}
+        {PRICE}
+        {OFF_LABEL && `${OFF_LABEL} Today!`}
+      </span>
+    </span>
+  );
+}
 
 /* Every value is a hex measured on breathforhealth.in, or an alpha of one.
    globals.css carries the same palette as CSS variables: change both together. */

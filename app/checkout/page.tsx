@@ -1,7 +1,7 @@
 'use client';
 
 /* Ankita house checkout: back link, centred masthead, form left, sticky order
-   summary right (an accordion below lg). Razorpay opens as a sheet over this
+   summary right (a compact card below lg). Razorpay opens as a sheet over this
    page; its handler only navigates. Purchase belongs to the webhook. */
 
 import Link from 'next/link';
@@ -9,7 +9,6 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 
 import {
   ArrowLeft,
-  CaretDown,
   CheckCircle,
   CreditCard,
   Lock,
@@ -35,7 +34,7 @@ import { collectSignals } from '@/lib/client-signals';
 import { trackAddToCart, trackBeginCheckout, trackInitiateCheckout } from '@/lib/track';
 
 import { SeatCount } from '../_landing/seat-count';
-import { C } from '../_landing/shared';
+import { C, CtaLabel } from '../_landing/shared';
 import { RECAP, VALUE_TOTAL, inr } from './included';
 
 declare global {
@@ -266,16 +265,16 @@ export default function CheckoutPage() {
                 Your details
               </p>
               <h2
-                className="mt-2 font-display text-[20px] font-extrabold leading-snug sm:text-[22px]"
+                className="mt-2 hidden font-display text-[20px] font-extrabold leading-snug sm:text-[22px] lg:block"
                 style={{ color: C.ink }}
               >
                 Where should we send your seat?
               </h2>
-              <p className="mt-2 text-[12.5px] sm:text-[13px]" style={{ color: C.inkSoft }}>
+              <p className="mt-2 hidden text-[12.5px] sm:text-[13px] lg:block" style={{ color: C.inkSoft }}>
                 Your session links and reminders go to these. Bonuses are shared in the WhatsApp Community after Day 2.
               </p>
 
-              <div className="mt-6 flex flex-col gap-4">
+              <div className="mt-4 flex flex-col gap-4 lg:mt-6">
                 {/* Separate fields so fn and ln hash cleanly; splitting a full
                     name on a space guesses wrong for two-word surnames. */}
                 <div className="grid grid-cols-2 gap-4">
@@ -408,19 +407,7 @@ export default function CheckoutPage() {
                 disabled={busy}
                 className="cta-pill mt-7 inline-flex min-h-[58px] w-full items-center justify-center px-6 font-display text-[16px] font-bold disabled:opacity-60"
               >
-                <span>
-                  {busy ? (
-                    'Taking you to payment…'
-                  ) : (
-                    <>
-                      Pay{' '}
-                      {LIST_PRICE && (
-                        <s className="mr-1 font-semibold opacity-70 decoration-2">{LIST_PRICE}</s>
-                      )}
-                      {PRICE} &amp; Book My Seat
-                    </>
-                  )}
-                </span>
+                {busy ? <span>Taking you to payment…</span> : <CtaLabel />}
               </button>
 
               <p
@@ -521,7 +508,7 @@ export default function CheckoutPage() {
             disabled={busy}
             className="cta-pill inline-flex min-h-[56px] flex-1 items-center justify-center px-3 text-center font-display text-[15px] font-bold leading-tight disabled:opacity-60"
           >
-            {busy ? 'Opening…' : 'Book My Seat Now - 81% Off'}
+            {busy ? 'Opening…' : <CtaLabel />}
           </button>
         </div>
       </div>
@@ -547,43 +534,25 @@ function Header() {
 }
 
 function OrderSummary() {
-  const [open, setOpen] = useState(false);
-
   return (
     <div
       className="rounded-2xl p-5 sm:p-6"
       style={{ background: C.surface, border: `1px solid ${C.line}` }}
     >
-      <button
-        type="button"
-        onClick={() => setOpen((o) => !o)}
-        aria-expanded={open}
-        aria-controls="order-summary-details"
-        className="flex w-full items-center justify-between gap-3 text-left lg:pointer-events-none"
-      >
-        <span className="min-w-0">
-          <span
-            className="block font-display text-[10.5px] font-bold uppercase tracking-[0.2em]"
-            style={{ color: C.ink }}
-          >
-            Order summary
-          </span>
-          <span
-            className="mt-2 block font-display text-[20px] font-extrabold leading-snug sm:text-[22px]"
-            style={{ color: C.ink }}
-          >
-            Your workshop, in full
-          </span>
-          <span className="mt-1 block text-[12px] lg:hidden" style={{ color: C.inkSoft }}>
-            {open ? 'Tap to hide details' : 'Tap to view what is included'}
-          </span>
+      <div>
+        <span
+          className="block font-display text-[10.5px] font-bold uppercase tracking-[0.2em]"
+          style={{ color: C.ink }}
+        >
+          Order summary
         </span>
-        <CaretDown
-          weight="bold"
-          className={`h-4 w-4 shrink-0 transition-transform lg:hidden ${open ? 'rotate-180' : ''}`}
-          style={{ color: C.inkSoft }}
-        />
-      </button>
+        <span
+          className="mt-2 hidden font-display text-[20px] font-extrabold leading-snug sm:text-[22px] lg:block"
+          style={{ color: C.ink }}
+        >
+          Your workshop, in full
+        </span>
+      </div>
 
       <div
         className="mt-5 flex items-start gap-3 rounded-2xl p-3"
@@ -624,7 +593,7 @@ function OrderSummary() {
         </div>
       </div>
 
-      <div id="order-summary-details" className={`${open ? 'block' : 'hidden'} lg:block`}>
+      <div className="hidden lg:block">
         <div className="mt-4 space-y-1.5">
           <p
             className="text-[10.5px] font-bold uppercase tracking-[0.16em]"
@@ -682,10 +651,10 @@ function OrderSummary() {
         </div>
       </div>
 
-      <div className="my-4 h-px" style={{ background: C.line }} />
+      <div className="my-4 hidden h-px lg:block" style={{ background: C.line }} />
 
       <div
-        className="flex items-baseline justify-between gap-3 rounded-2xl px-4 py-3.5"
+        className="hidden items-baseline justify-between gap-3 rounded-2xl px-4 py-3.5 lg:flex"
         style={{ background: C.dark }}
       >
         <span
@@ -711,7 +680,7 @@ function OrderSummary() {
       </div>
 
       <div
-        className="mt-5 flex items-start gap-3 rounded-2xl p-3"
+        className="mt-5 hidden items-start gap-3 rounded-2xl p-3 lg:flex"
         style={{ background: C.tint, border: `1px solid ${C.line}` }}
       >
         <CreditCard weight="duotone" className="h-5 w-5 shrink-0" style={{ color: C.ink }} />
