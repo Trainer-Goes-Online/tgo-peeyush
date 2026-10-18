@@ -11,7 +11,7 @@ export const PRICE = inr(PRICE_RUPEES);
 
 export const WORKSHOP_NAME = '2-Day Breath Healing Mastery Workshop';
 export const AUDIENCE_LINE =
-  "For people who've tried everything - yet still struggle with recurring health issues";
+  "For people who've tried everything - yet still struggle breathing issues";
 export const FORMAT = '2-Day Live, Doctor-Led Workshop';
 
 /* Change weekly in Vercel env (then redeploy: NEXT_PUBLIC_* is inlined at build).

@@ -37,7 +37,7 @@ export default function Hero() {
         </p>
 
         <p className="mt-5 max-w-3xl font-display text-[17px] font-semibold leading-snug sm:text-[21px]" style={{ color: C.heading }}>
-          <span className="pp-u">Without medicines, expensive treatments or long yoga sessions</span>
+          <span className="pp-u">Without medicine, expensive treatments on complicated yoga techniques</span>
         </p>
 
         <p className="mt-5 flex flex-wrap items-center justify-center gap-x-3 gap-y-2 font-display text-[16px] font-bold sm:text-[17px]" style={{ color: C.heading }}>
