@@ -32,8 +32,8 @@ export default function Hero() {
         </p>
 
         <p className="pp-hero-head mt-6 max-w-[900px] sm:mt-7">
-          Overcome <b className="pp-u">Asthma, Respiratory Issues, Migraines, Sinus, Poor Sleep, Stress etc.</b>{' '}
-          by mastering a simple <b className="pp-u">10-Min Breath Routine</b>
+          Overcome <b className="pp-u">Asthma, Respiratory Issues &amp; Breathing Difficulties</b>{' '}
+          by mastering a simple <b className="pp-u">10-min Daily Breath Routine</b>
         </p>
 
         <p className="mt-5 max-w-3xl font-display text-[17px] font-semibold leading-snug sm:text-[21px]" style={{ color: C.heading }}>
