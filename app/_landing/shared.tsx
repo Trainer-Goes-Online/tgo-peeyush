@@ -5,7 +5,7 @@ import {
   CHECKOUT_HREF,
   CTA_LABEL,
   LIST_PRICE,
-  OFF_LABEL,
+  PERCENT_OFF,
   PRICE_RUPEES,
   PROMISE_NAME,
   PROMISE_TEXT,
@@ -25,7 +25,7 @@ export function CtaLabel({ totalRupees = PRICE_RUPEES }: { totalRupees?: number 
           <s className="mr-1 font-semibold opacity-70 decoration-2">{LIST_PRICE}</s>
         )}
         {inr(totalRupees)}
-        {seatOnly && OFF_LABEL && `${OFF_LABEL} Today!`}
+        {seatOnly && PERCENT_OFF > 0 && ` (${PERCENT_OFF}% Off Today!)`}
       </span>
     </span>
   );

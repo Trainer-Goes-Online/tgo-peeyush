@@ -307,9 +307,10 @@ export default function CheckoutPage() {
     <main className="min-h-screen font-body" style={{ background: C.tint }}>
       <Header />
 
-      <section className="py-8 md:py-14">
+      <section className="py-5 md:py-14">
         <div className="mx-auto max-w-6xl px-4 sm:px-5 md:px-8">
-          <div className="mb-8 text-center sm:mb-10 md:mb-12">
+          {/* Phones go straight to the order summary. */}
+          <div className="mb-12 hidden text-center lg:block">
             <span
               className="inline-flex max-w-full items-center gap-1.5 rounded-full px-3 py-1.5 font-display text-[10.5px] font-bold uppercase tracking-[0.16em]"
               style={{ background: C.accent, color: C.onAccent }}
@@ -566,10 +567,8 @@ export default function CheckoutPage() {
       <SiteFooter />
 
       {/* ══ PHONES: the docked bar, and the room reserved for it ═════════
-          The spacer height is MEASURED, not guessed. The bar grows by a line
-          when an add-on is ticked (it names what was added), so a hardcoded
-          height is correct only in one of four states and the footer's legal
-          text ends up under the bar in the other three. */}
+          The spacer height is MEASURED, not guessed, so the footer's legal
+          text never ends up under the bar. */}
       <div aria-hidden className="lg:hidden" style={{ height: dockHeight }} />
       <div
         ref={dockRef}
@@ -581,41 +580,7 @@ export default function CheckoutPage() {
           paddingBottom: 'env(safe-area-inset-bottom)',
         }}
       >
-        <p
-          className="px-4 pt-2.5 text-center font-display text-[13px] font-bold leading-snug"
-          style={{ color: C.heading }}
-        >
-          Last{' '}
-          <span className="seat-chip">
-            <SeatCount />
-          </span>{' '}
-          Seats Left - Booking Closes Once Full
-        </p>
-
-        {/* ══ THE ADD-ONS, IN THE DOCK ═══════════════════════════════════
-            The same two controls as the full cards, bound to the same state,
-            so ticking either surface moves the other. They live here because
-            on a phone the cards sit below six form fields — the upsell was
-            only ever seen by someone who scrolled past the thing they came
-            to do.
-
-            These REPLACE the "Seat ₹1 + Recordings ₹500" breakdown line that
-            used to sit here. The rows now say what was added and what each
-            costs, so the line was the same information twice in a bar whose
-            every row costs the buyer screen. */}
-        <div className="mx-auto mt-2 max-w-6xl space-y-1.5 px-4">
-          {ADDONS.map((a, i) => (
-            <AddonMiniRow
-              key={a.id}
-              addon={a}
-              on={addons.has(a.id)}
-              onToggle={() => toggleAddon(a.id)}
-              second={i === 1}
-            />
-          ))}
-        </div>
-
-        <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 pb-3 pt-2">
+        <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3">
           <div className="shrink-0">
             <p className="font-display text-[11px] font-bold uppercase tracking-[0.12em]" style={{ color: C.inkSoft }}>
               Total
@@ -735,73 +700,31 @@ function AddonCard({
   );
 }
 
-/* ══ One add-on, compact, for the docked bar ════════════════════════════
-   A SECOND control for the same state, not a second piece of state. Ticking
-   here moves the full card and vice versa, because both read and write the
-   one `addons` Set on the page.
-
-   It carries its own `aria-label` rather than inheriting the card's wording:
-   a screen reader now meets two checkboxes for the same thing, and two
-   controls reading "Workshop recordings, Day 1 + Day 2" with no way to tell
-   them apart is worse than one. The label here names the action and the
-   price, which is what this row actually offers. ────────────────────────── */
-function AddonMiniRow({
-  addon,
-  on,
-  onToggle,
-  second,
-}: {
-  addon: (typeof ADDONS)[number];
-  on: boolean;
-  onToggle: () => void;
-  second: boolean;
-}) {
-  return (
-    <label
-      className={`pp-addon-mini ${second ? 'pp-addon-mini--b' : ''}`}
-      data-on={on ? 'true' : 'false'}
-    >
-      <input
-        type="checkbox"
-        checked={on}
-        onChange={onToggle}
-        aria-label={`${addon.miniLabel} for ${inr(addon.rupees)}`}
-        className="absolute h-px w-px opacity-0"
-        style={{ clipPath: 'inset(50%)' }}
-      />
-
-      <span className="pp-addon-box pp-addon-box--sm" aria-hidden>
-        <Check weight="bold" className="h-3 w-3" />
-      </span>
-
-      <span
-        className={`pp-addon-flag pp-addon-flag--sm ${second ? '' : 'pp-addon-flag--accent'}`}
-        aria-hidden
-      >
-        <span className="pp-addon-dot" />
-        {addon.flag}
-      </span>
-
-      {/* `min-w-0` + `truncate` on the label, and `shrink-0` on the price:
-          when the row runs out of room at 320px it is the sentence that
-          shortens, never the number. */}
-      <span
-        className="min-w-0 flex-1 truncate text-[12px] font-semibold"
-        style={{ color: C.ink }}
-      >
-        {addon.miniLabel}
-      </span>
-      <span className="pp-addon-delta shrink-0 text-[12.5px]">
-        + {inr(addon.rupees)}
-      </span>
-    </label>
-  );
-}
-
 function Header() {
   return (
-    <header className="px-4 py-4 sm:px-6" style={{ background: C.dark, color: C.onDark }}>
-      <div className="mx-auto flex max-w-6xl items-center gap-4">
+    <header className="px-4 py-3 sm:px-6 lg:py-4" style={{ background: C.dark, color: C.onDark }}>
+      <div className="mx-auto max-w-6xl text-center lg:hidden">
+        <p
+          className="flex items-center justify-center gap-x-2 text-[12px] font-semibold"
+          style={{ color: C.onDarkMute }}
+        >
+          <span className="inline-flex items-center gap-1 whitespace-nowrap">
+            <Lock weight="fill" className="h-3 w-3 shrink-0" />
+            Razorpay Secured
+          </span>
+          <span aria-hidden="true">·</span>
+          <span className="whitespace-nowrap">SSL Encrypted</span>
+        </p>
+        <p className="mt-1.5 font-display text-[13px] font-bold leading-snug">
+          Last{' '}
+          <span className="seat-chip">
+            <SeatCount />
+          </span>{' '}
+          Seats Left - Booking Closes Once Full
+        </p>
+      </div>
+
+      <div className="mx-auto hidden max-w-6xl items-center gap-4 lg:flex">
         <Link
           href="/"
           className="inline-flex items-center gap-1.5 text-[13px] font-semibold"
