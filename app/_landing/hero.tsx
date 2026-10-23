@@ -31,9 +31,23 @@ export default function Hero() {
           {AUDIENCE_LINE}
         </p>
 
+        {/* ⚠️ REVERTED to the broader symptom list on 23 Oct, on the manager's
+            call. Upstream's `01b4682 hero title changes` had narrowed this to
+            "Asthma, Respiratory Issues & Breathing Difficulties" / "10-min
+            Daily Breath Routine", which is what was live.
+
+            The wider list is deliberate: it names the symptoms the workshop's
+            own modules and FAQs cover (migraines, sinus, sleep, stress), so a
+            visitor who came for poor sleep rather than asthma still sees
+            themselves in the first line. Narrowing it to breathing alone
+            reads as a different, smaller product than the rest of the page
+            sells.
+
+            ⚠️ If this is narrowed again, the AUDIENCE_LINE above and the
+            sub-line below should move with it — see offer.ts. */}
         <p className="pp-hero-head mt-6 max-w-[900px] sm:mt-7">
-          Overcome <b className="pp-u">Asthma, Respiratory Issues &amp; Breathing Difficulties</b>{' '}
-          by mastering a simple <b className="pp-u">10-min Daily Breath Routine</b>
+          Overcome <b className="pp-u">Asthma, Respiratory Issues, Migraines, Sinus, Poor Sleep, Stress etc.</b>{' '}
+          by mastering a simple <b className="pp-u">10-Min Breath Routine</b>
         </p>
 
         <p className="mt-5 max-w-3xl font-display text-[17px] font-semibold leading-snug sm:text-[21px]" style={{ color: C.heading }}>
